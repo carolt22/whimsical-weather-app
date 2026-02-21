@@ -1,0 +1,30 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding-top: 50px;
+    transition: background 0.5s ease;
+}
+
+body.sunny {
+    background: linear-gradient(to top, #87ceeb, #ffffff);
+}
+
+body.rain {
+    background: linear-gradient(to top, #5f6d7a, #a1b0c0);
+}
+
+body.snow {
+    background: linear-gradient(to top, #cfe0e8, #ffffff);
+}
+
+body.cloudy {
+    background: linear-gradient(to top, #b0b7c3, #e2e5ea);
+}
+
+.weather-card {
+    margin-top: 20px;
+    padding: 20px;
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+}
