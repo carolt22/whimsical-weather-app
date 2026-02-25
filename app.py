@@ -7,16 +7,24 @@ app = Flask(__name__)
 @app.route("/", methods=["GET", "POST"])
 def index():
     weather = None
-    theme = ""
+    error = None
+    scene = "default"
 
     if request.method == "POST":
         city = request.form.get("city")
         weather = get_weather(city)
 
         if weather:
-            theme = map_condition_to_theme(weather["condition"])
-
-    return render_template("index.html", weather=weather, theme=theme)
+            scene = map_condition_to_theme(weather["condition"])
+        else:
+            error = "City not found."
+    
+    return render_template(
+        "index.html", 
+        weather=weather,
+        error=error,
+        scene=scene
+        )
 
 if __name__ == "__main__":
     app.run(debug=True)
