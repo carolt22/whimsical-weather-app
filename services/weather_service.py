@@ -28,7 +28,10 @@ def get_weather(city):
             "city": city,
             "temperature": temp,
             "description": description,
-            "condition": condition
+            "condition": condition,
+            "sunrise":data["sys"]["sunrise"],
+            "sunset":data["sys"]["sunset"],
+            "current":data["dt"]
         }
     
     return None

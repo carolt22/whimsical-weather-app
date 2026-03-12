@@ -7,36 +7,47 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     </head>
     <body>
-    <div class="scene {{ scene }}">
+        <div id="background-layer"></div>
 
-        <div class="weather-card">
-
-            <h1>Whimsical Weather</h1>
-
-            <form method="POST">
-                <input type="text" name="city" placeholder="Enter city" required>
-                <button type="submit">Search</button>
-            </form>
-
-            {% if weather %}
-                <h2>{{ weather.city }}</h2>
-                <h3>{{ weather.temperature }}°C</h3>
-                <p>{{ weather.description }}</p>
-            {% endif %}
-
-            {% if error %}
-               <p class="error"> {{error}} </p>
-            {% endif %}
+        <!-- Animation layers-->
+        <div id="effects-layer">
+            <div class="cloud-layer"></div>
+            <div class="rain-layer"></div>
+            <div class="snow-layer"></div>
+            <div class="thunder-layer"></div>
 
         </div>
 
-        <!-- Animation layers-->
-        <div class="cloud-layer"></div>
-        <div class="cloud-layer-2"></div>
-        <div class="rain-layer"></div>
-        <div class="snow-layer"></div>
+         <!-- UI layer-->
+        <div id="content-layer">
+            <div class="weather-card">
+                <h1>Whimsical Weather</h1>
 
-    </div>
+                <form method="POST">
+                    <input type="text" name="city" placeholder="Enter city" required>
+                    <button type="submit">Search</button>
+                </form>
+
+                {% if weather %}
+                    <h2>{{ weather.city }}</h2>
+                    <h3>{{ weather.temperature }}°C</h3>
+                    <p>{{ weather.description }}</p>
+                {% endif %}
+
+                {% if error %}
+                    <p class="error"> {{error}} </p>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <script src="{{ url_for('static', filename='themes.js') }}"></script>
+
+        {% if weather %}
+        <script>
+            window.weatherData = {{ weather | tojson }};
+        </script>
+        {% endif %}
     
     </body>
 </html>
