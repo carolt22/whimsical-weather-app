@@ -5,6 +5,7 @@
             Whimsical Weather
         </title>
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Press+Start+2P&display=swap" rel="stylesheet">
     </head>
     <body>
         <div id="background-layer"></div>
@@ -19,33 +20,48 @@
         </div>
 
          <!-- UI layer-->
-        <div id="content-layer">
-            <div class="weather-card">
+        <div class="weather-card">
+
+            <div class="current-weather">
                 <h1>Whimsical Weather</h1>
 
                 <form method="POST">
                     <input type="text" name="city" placeholder="Enter city" required>
-                    <button type="submit">Search</button>
+                    <button type="submit">🔍︎</button>
                 </form>
 
                 {% if weather %}
                     <h2>{{ weather.city }}</h2>
-                    <h3>{{ weather.temperature }}°C</h3>
+                    <h3 id="temperature">{{ weather.temperature }}°C</h3>
                     <p>{{ weather.description }}</p>
+                    <button id="temp-toggle">Switch to °F</button>
                 {% endif %}
 
                 {% if error %}
                     <p class="error"> {{error}} </p>
                 {% endif %}
             </div>
-
+                
+            {% if forecast %}
+            <div class="forecast-container">
+                {% for day in forecast %}
+                    <div class="forecast-card">
+                        <p class="forecast-day">{{ day.date }}</p>
+                        <img src="https://openweathermap.org/img/wn/{{ day.icon }}@2x.png">
+                        <p class="forecast-temp" data-temp="{{ day.temp }}">{{ day.temp }}°C</p>
+                        <p>{{ day.description }}</p>
+                    </div>   
+                {% endfor %}             
+            </div>
+            {% endif %}
+            
         </div>
 
         <script src="{{ url_for('static', filename='themes.js') }}"></script>
 
         {% if weather %}
         <script>
-            window.weatherData = {{ weather | tojson }};
+            window.weatherData = {{ weather | tojson}};
         </script>
         {% endif %}
     

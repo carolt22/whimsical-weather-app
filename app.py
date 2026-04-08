@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from services.weather_service import get_weather
+from services.weather_service import get_weather, get_forecast
 from utils.scene_mapper import map_condition_to_theme
 
 app = Flask(__name__)
@@ -8,11 +8,13 @@ app = Flask(__name__)
 def index():
     weather = None
     error = None
+    forecast = None
     scene = "default"
 
     if request.method == "POST":
         city = request.form.get("city")
         weather = get_weather(city)
+        forecast = get_forecast(city)
 
         if weather:
             scene = map_condition_to_theme(weather["condition"])
@@ -22,6 +24,7 @@ def index():
     return render_template(
         "index.html", 
         weather=weather,
+        forecast=forecast,
         error=error,
         scene=scene
         )
