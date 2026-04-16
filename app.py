@@ -13,13 +13,22 @@ def index():
 
     if request.method == "POST":
         city = request.form.get("city")
-        weather = get_weather(city)
-        forecast = get_forecast(city)
 
-        if weather:
-            scene = map_condition_to_theme(weather["condition"])
-        else:
-            error = "City not found."
+        if not city:
+            error = "Please enter a city."
+            return render_template("inex.tml", error=error)
+        
+        try:
+            weather = get_weather(city)
+
+            if not weather:
+                error = f"Couldn't find '{city}'. Try another city."
+            else:
+                forecast = get_forecast(city)
+                scene = map_condition_to_theme(weather["condition"])
+        except Exception as e:
+            print("ERROR.",e)
+            error = "Something went wrong. Please try again."
     
     return render_template(
         "index.html", 

@@ -32,7 +32,9 @@ def get_weather(city):
             "condition": condition,
             "sunrise":data["sys"]["sunrise"],
             "sunset":data["sys"]["sunset"],
-            "current":data["dt"]
+            "current":data["dt"],
+            "clouds":data["clouds"]["all"],
+            "timezone": data["timezone"]
         }
     
     return None
