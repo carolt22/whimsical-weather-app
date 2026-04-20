@@ -32,6 +32,7 @@
                         <button id="search-btn" type="submit">🔍︎</button>
 
                         <div class="loader" id="loader"></div>
+                        <div id="loader-overlay"></div>
                     </form>
 
                     {% if weather %}
@@ -69,18 +70,43 @@
 
                 <div class="info-card sun-card" id="sun-card">
                     <p class="card-title">Sun Cycle (Local Time)</p>
-                    <div class="sun-row">
-                        <span id="sunrise-time">--:--</span>
-                        <span id="sunset-time">--:--</span>
+                    <div class="card-preview">
+                        <div class="card-preview-text" id="sun-preview"></div>
                     </div>
 
-                    <p id="sun-status"></p> 
+                    <div class="card-details">
+                        <div class="sun-row">
+                            <p id="sunrise-time"></p>
+                            <p id="sunset-time"></p>
+                        </div>
+
+                        <div class="divider"></div>
+                        
+                        <p id="sun-status" class="pixel-text"></p> 
+                    </div>
+                   
                 </div>
 
                 <div class="info-card star-card" id="star-card">
-                    <p class="card-title">Stargazing</p>
-                    <p id="stargazing">--</p>
-                    <div class="stargazing-bar"></div>
+                    <p class="card-title">Tonight's Sky</p>
+
+                    <div class="card-preview">
+                        <div class="card-preview-text" id="star-preview"></div>
+                    </div>
+
+                    <div class="card-details">
+                        <p class="label">Star Visibility</p>
+                         <p id="stargazing" class="pixel-text"></p>
+
+                         <div class="divider"></div>
+        
+                         <p class="label">Moon</p>
+                         <p id="moon-phase">
+                            <span class="moon-icon" id="moon-icon"></span>
+                            <span id="moon-text"></span>
+                         </p>
+                    </div>
+
                 </div>
             {% endif %}
 

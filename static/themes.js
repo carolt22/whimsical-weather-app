@@ -150,11 +150,14 @@ document.addEventListener("DOMContentLoaded", () => {
         function flash() {
             if (!active) return;
 
+            const intensity = Math.random() * 0.5 +0.2;
+            
+            thunderLayer.style.opacity = intensity;
             thunderLayer.style.animation = "none";
             void thunderLayer.offsetWidth;
             thunderLayer.style.animation = "lightningFlash 1s ease";
 
-            const next = Math.random() * 8000 + 4000;
+            const next = Math.random() * 20000 + 15000;
             setTimeout(flash, next);
         }
         
@@ -172,8 +175,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!sunriseEl || !sunsetEl || !statusEl) return;
 
-        sunriseEl.textContent = `sunrise: ${formatCityTime(sunrise, timezone)}`;
-        sunsetEl.textContent = `sunset: ${formatCityTime(sunset, timezone)}`;
+        sunriseEl.textContent = `Sunrise: ${formatCityTime(sunrise, timezone)}`;
+        sunsetEl.textContent = `Sunset: ${formatCityTime(sunset, timezone)}`;
 
         if (nowSec < sunrise) {
                 statusEl.textContent = `Sunrise in ${getTimeRemaining(sunrise)}`;
@@ -199,14 +202,68 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
     function initStarCard() {
-        const el = document.getElementById("stargazing");
-        if (!el) return;
-        
-        const rating = getStargazingRating(description, clouds, isNight);
-        el.textContent = rating;
+        const ratingEl = document.getElementById("stargazing");
+        const moonEl = document.getElementById("moon-phase");
+        const moonIcon = document.getElementById("moon-icon");
+        const moonText = document.getElementById("moon-text");
 
+        if (!ratingEl) return;
+        
+        let rating = getStargazingRating(description, clouds, isNight);
+        const moonPhase = getMoonPhase();
+        
+        rating = adjustRatingForMoon(rating, moonPhase);
+        ratingEl.textContent = rating;
+
+        if (moonIcon && moonText) {
+            const phaseClassMap = {
+                "New Moon": "moon-new",
+                "Waxing Crescent": "moon-waxing-crescent",
+                "First Quarter": "moon-first-quarter",
+                "Waxing Gibbous": "moon-waxing-gibbous",
+                "Full Moon": "moon-full",
+                "Waning Gibbous": "moon-waning-gibbous",
+                "Last Quarter": "moon-last-quarter",
+                "Waning Crescent": "moon-waning-crescent"
+            };
+
+        const phaseClass = phaseClassMap[moonPhase] || "moon-new";
+        
+        moonIcon.className = "moon-icon " + phaseClass;
+        moonText.textContent = moonPhase;
+}
         generateStars(rating, isNight);
-        applyStargazingVisual(rating);
+    }
+
+    function getMoonPhase() {
+        const now = new Date();
+        const lp = 2551443;
+        const knownNewMoon = new Date("2000-01-06T18:14:00Z");
+        
+        const synodicMonth = 29.53058867;
+
+        const daysSince = (now - knownNewMoon) / (1000 * 60 * 60 * 24);
+
+        const phase = (daysSince % synodicMonth) / synodicMonth;
+
+        if (phase < 0.0625) return "New Moon";
+        if (phase < 0.1875) return "Waxing Crescent";
+        if (phase < 0.3125) return "First Quarter";
+        if (phase < 0.4375) return "Waxing Gibbous";
+        if (phase < 0.5625) return "Full Moon";
+        if (phase < 0.6875) return "Waning Gibbous";
+        if (phase < 0.8125) return "Last Quarter";
+        if (phase < 0.9375) return "Waning Crescent";
+
+        return "New Moon";
+    }
+
+    function adjustRatingForMoon(rating, phase) {
+        if (phase === "Full Moon") {
+            if (rating === "Excellent") rating = "Decent";
+            if (rating === "Decent") rating = "Limited";
+        }
+        return rating;
     }
 
     //STAR SYSTEM
@@ -230,7 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     rating === "Limited" ? 40 :
                     rating === "Poor" ? 15 : 0;
 
-        let twinkle = rating === "Excellent";
+        let twinkle = (rating === "Excellent") || (rating === "Decent");
 
         for (let i = 0; i < count; i++) {
             const star = document.createElement("div");
@@ -264,21 +321,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         layer.style.opacity = "0"
         layer.innerHTML = "";
-    }
-
-    function applyStargazingVisual(rating) {
-        const bar = document.querySelector(".stargazing-bar");
-        if (!bar) return;
-
-        const map = {
-            "Excellent" : "100%",
-            "Good": "75%",
-            "Limited": "50%",
-            "Poor": "25%",
-            "Daylight - Not visible": "0%" 
-        };
-
-        bar.style.setProperty("--rating-width", map[rating] || "0%");
     }
 
     //// EXPANDABLE CARDS ////
@@ -370,11 +412,54 @@ document.addEventListener("DOMContentLoaded", () => {
     setupExpandableCard("star-card", () => {
         if (!isNight) return "day_time";
 
+        const cond = description.toLowerCase();
+
+        if (cond.includes("thunderstorm")) return "thunderstorm";
+        if (cond.includes("rain")) return "rain";
+        if (cond.includes("snow")) return "snow";
+
         if (clouds > 75) return "clouds_night";
         if (clouds > 25) return "partly_night";
 
         return "star_night";
     });
+
+    // CARD DETAILS //
+
+    function updatePreviews() {
+        const sunEl = document.getElementById("sun-preview");
+        const starEl = document.getElementById("star-preview");
+
+        if (sunEl) {
+            sunEl.textContent = getSunPreview(nowSec, sunrise, sunset);
+        }
+
+        if (starEl) {
+           const rating = getStargazingRating(description, clouds, isNight);
+            starEl.textContent = getStarPreviewText(rating, isNight, clouds);
+        }
+    }
+
+    function getSunPreview(nowSec, sunrise, sunset) {
+        if (nowSec < sunrise) {
+            return `Sunrise in ${getTimeRemaining(sunrise)}`;
+        } else if (nowSec < sunset) {
+            return `Sunset in ${getTimeRemaining(sunset)}`;
+        } else {
+            return "Sun has set";
+        }
+    }
+
+    function getStarPreviewText(rating, isNight, clouds) {
+        if (!isNight) return "Stars hidden by daylight";
+
+        if (rating === "Excellent") return "Perfect night for stargazing 💫";
+        if (rating === "Decent") return "Some stars visible tonight";
+        if (rating === "Limited") return "Clouds may block the view";
+        if (rating === "Poor") return "Low visibility - Not ideal for stargazing";
+
+        return "Look up tonight";
+    }
 
     //// UI/UX ////
 
@@ -385,11 +470,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const form = document.getElementById("weather-form");
         const btn = document.getElementById("search-btn");
         const loader = document.getElementById("loader");
+        const overlay = document.getElementById("loader-overlay");
 
         if (!form || !btn || !loader) return;
      
         form.addEventListener("submit", () => {
             loader.style.display = "block";
+            overlay.style.display = "block";
+
             btn.textContent = "Loading...";
             btn.disabled = true;
         });
@@ -427,6 +515,15 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    function applyGlassTheme(isNight) {
+        document.documentElement.style.setProperty(
+            "--glass-bg",
+            isNight
+              ? "rgba(10, 15, 30, 0.33)"
+              : "rgba(10, 15, 30, 0.2)"
+        );
+    }
+
     //// INIT ////
 
     function init() {
@@ -453,6 +550,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         currentWeatherTheme = getWeatherTheme(description, isNight);
 
+        applyGlassTheme(isNight);
         applyTheme(currentWeatherTheme);
         applyWeatherEffects(description, isNight);
 
@@ -460,8 +558,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setupSlider();
         setupLoader();
 
-        initSunCard();
-
+        updatePreviews();
     }
 
     init();

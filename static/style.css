@@ -1,14 +1,14 @@
 /* DESIGN SYSTEM */
 
 :root {
-    --glass-bg: rgba(255, 255, 255, 0.1);
-    --glass-border: rgba(255, 255, 255, 0.25);
+    --glass-bg: rgba(20, 25, 40, 0.3);
+    --glass-border: rgba(255, 255, 255, 0.18);
 
-    --text-main: rgba(255, 255, 255, 0.9);
+    --text-main: rgba(255, 255, 255, 0.92);
     --text-muted: rgba(255, 255, 255, 0.7);
 
-    --blur: blur(12px);
-    --radius: 16px;
+    --blur: blur(6px);
+    --radius: 32px;
 
     --shadow-main: 0 8px 32px rgba(0, 0, 0, 0.25);
     --shadow-soft: 0 4px 16px rgba(0, 0, 0, 0.2);
@@ -56,7 +56,7 @@ body {
 /* TYPOGRAPHY */
 
 h1 {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: 600;
     margin: 0;
 }
@@ -70,7 +70,22 @@ h2 {
 p {
     font-size: 0.95rem;
     margin: 0;
-    opacity: 0.85;
+    opacity: 0.9;
+}
+
+.pixel-text {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.65rem;
+
+    letter-spacing: 0.05rem;
+    line-height: 1.5;
+
+    white-space: normal;
+
+    text-align: center;
+
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
 }
 
 /* MAIN CONTAINER */
@@ -81,6 +96,10 @@ p {
     align-items: center;
     gap: 1.2rem;
     z-index: 20;
+}
+
+input[name="city"] {
+    text-transform: capitalize;
 }
 
 /* WEATHER CARD */
@@ -107,7 +126,7 @@ p {
 
     transition: transform 0.3s ease, opacity 0.3s ease;
 
-    z-index: 20;    
+    z-index: 20; 
 }
 
 .weather-card.initial-load {
@@ -173,7 +192,7 @@ p {
     border-radius: var(--radius);
 
     background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(12px);
 
     text-align: center;
     font-size: 0.75rem;
@@ -222,7 +241,7 @@ p {
 
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: var(--blur);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--glass-border);
 
     box-shadow: var(--shadow-soft);
 
@@ -240,17 +259,21 @@ p {
 /* CARD THEMES */
 
 .sun-card {
-    background: linear-gradient(
-        rgba(255, 200, 120, 0.15),
-        rgba(255, 255, 255,0.05)
-    );
+    background: var(--glass-bg)
+                linear-gradient(
+                rgba(255, 200, 120, 0.15),
+                rgba(255, 255, 255,0.05)
+                );
+    border-radius: 20px;
 }
 
 .star-card {
-    background: linear-gradient(
-        rgba(120, 140, 255, 0.15),
-        rgba(255, 255, 255,0.05)
-    );
+    background: var(--glass-bg)
+                linear-gradient(
+                 rgba(120, 140, 255, 0.15),
+                 rgba(255, 255, 255,0.05)
+                 );
+    border-radius: 20px;
 }
 
 /* EXPANDED MODE */
@@ -261,19 +284,20 @@ p {
     left: 50%;
     transform: translate(-50%, -50%) scale(1.03);
 
+    min-width: 260px;
+    max-width: 340px;
     width: fit-content;
-    max-width: 90%;
 
-    padding: 20px;
+    padding: 20px 24px;
     border-radius: 20px;
     z-index: 1000;
 
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    gap: 0.6rem;
 
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--glass-bg);
     backdrop-filter: blur(25px);
 
     box-shadow: var(--shadow-soft);
@@ -281,10 +305,17 @@ p {
     border: 1px solid rgba(255,255,255,0.2);
 
     animation: cinematicZoom 0.4s ease;
+    transition: all 0.3s ease;
 }
 
 .info-card.expanded > * {
     animation: contentFade 0.6s ease;
+}
+
+.info-card.expanded .pixel-text {
+    max-width: 500px;
+    text-align: center;
+    line-height: 1.6;
 }
 
 .info-card.hidden {
@@ -308,6 +339,43 @@ body.expanded-mode .info-card:not(.expanded) {
     z-index: 1001;
 }
 
+/* CARD PREVIEW */
+
+.card-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.card-icon {
+    font-size: 1.4rem;
+}
+
+.card-preview-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+/* CARD DETAILS */
+
+.card-details {
+    display: none;
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.info-card.expanded .card-details {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.3s ease;
+}
+
+.info-card.expanded .card-preview {
+    display: none;
+}
 /*SUN + STAR CONTENT */
 
 .card-title {
@@ -317,6 +385,21 @@ body.expanded-mode .info-card:not(.expanded) {
     color: var(--text-muted);
     opacity: 0.7;
     margin-bottom: 0.4rem;
+}
+
+.label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 0.4rem;
+}
+
+.divider {
+    width: 80%;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.02);
+    margin: 0.6rem auto;
 }
 
 .sun-row {
@@ -331,26 +414,95 @@ body.expanded-mode .info-card:not(.expanded) {
 
 #stargazing {
     margin-top: 0.5rem;
-    font-weight: 500;
+    font-weight: 400;
 }
 
-.stargazing-bar {
-    margin-top: 8px;
-    width: 100%;
-    height: 6px;
-    border-radius: 6px;
-    background: rgba(120, 140, 255, 0.15);
+
+#stargazing.pixel-text {
+    animation: pixelFade 0.6s ease;
+}
+
+#moon-phase {
+    margin-top: 0.4rem;
+    font-size: 0.75rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    opacity: 0.9;
+    flex-wrap: wrap;
+}
+
+#moon-phase span {
+    font-size: 1.2rem;
+}
+
+.moon-icon {
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+
+    margin-right: 6px;
+
+    background: radial-gradient(circle at 30% 30%, #fff 40%, #ccc 100%);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+
     overflow: hidden;
+    flex-shrink: 0;
 }
 
-.stargazing-bar::after {
+.moon-icon::after {
     content: "";
-    display: block;
-    height: 100%;
-    width: var(--rating-width, 50%);
-    background: linear-gradient(90deg, #7aa2ff, #c2d3ff);
-    border-radius: 6px;
-    transition: width 0.4s ease;
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+
+    background: rgba(0, 0, 0, 0.9);
+    transform: translateX(0%);
+    transition: transform 0.4s ease;
+}
+
+.moon-new::after {
+    transform: translateX(0%);
+}
+
+.moon-waxing-crescent::after {
+    transform: translateX(-25%);
+}
+
+.moon-first-quarter::after {
+    transform: translateX(-50%);
+}
+
+.moon-waxing-gibbous::after {
+    transform: translateX(-75%);
+}
+
+.moon-full::after {
+    transform: translateX(-110%);
+}
+
+.moon-waning-gibbous::after {
+    transform: translateX(75%);
+}
+
+.moon-last-quarter::after {
+    transform: translateX(50%);
+}
+
+.moon-waning-crescent::after {
+    transform: translateX(25%);
+}
+
+.moon-icon,
+.moon-icon::after {
+    transition: all 0.4s ease;
 }
 
 /* FORM + BUTTONS */
@@ -400,7 +552,7 @@ button:hover{
     background: rgba(255, 255, 255, 0.15);
     border: 1px solid rgba(255, 100, 100, 0.3);
 
-    color: #ff6b6b;
+    color: #f44646;
 
     animation: fadeIn 0.4s ease;
 }
@@ -421,6 +573,17 @@ button:hover{
     animation: spin 1s linear infinite;
     display: none;
     z-index: 999;
+}
+
+#loader-overlay {
+    position: fixed;
+    inset: 0;
+    backdrop-filter: blur(5px);
+    background: rgba(200, 200, 200, 0.3);
+    z-index: 8;
+    border-radius: var(--radius);
+
+    display: none;
 }
 
 /* WEATHER EFFECTS  */
@@ -566,6 +729,17 @@ body.thunderstorm #background-layer {
     }
 }
 
+@keyframes pixelFade {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @keyframes spin {
     to { transform: translate(-50%, -50%) rotate(360deg); }
 }
@@ -577,8 +751,8 @@ body.thunderstorm #background-layer {
 
 @keyframes lightningFlash {
     0%, 100% { opacity: 0; }
-    10% { opacity: 0.8; }
-    30% {opacity: 0.6; }
+    10% { opacity: 0.4; }
+    30% {opacity: 0.25; }
 }
 
 @keyframes twinkle {
