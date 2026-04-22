@@ -17,7 +17,7 @@ def index():
 
         if not city:
             error = "Please enter a city."
-            return render_template("inex.tml", error=error)
+            return render_template("index.html", error=error)
         
         try:
             weather = get_weather(city)
