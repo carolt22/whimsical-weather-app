@@ -14,7 +14,7 @@ Enter any city around the world to view real-time weather conditions, a five-day
 ![Dashboard](assets/weather_dashboard.png)
 
 #### Astronomy Module
-[![Astronomy Preview](assets/astronomy.png)](assets/astronomy-demo.mp4)
+[![Astronomy Preview](assets/astronomy.png)](assets/astronomy_demo.mp4)
 
 #### Landing Page
 ![Landing](assets/landing.png)
